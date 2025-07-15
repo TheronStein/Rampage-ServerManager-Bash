@@ -20,7 +20,7 @@ veng_season=(
     'week2'
     'week3'
     'week4'
-    'semi'
+    'semis'
     'finals'
 )
 
@@ -65,7 +65,7 @@ build_vengeance_hostname() {
     fi
 
     # Build the complete hostname
-    echo "+sv_hostname \"${BASE_HOSTNAME} ${veng_string}${veng_week[$week_num]}:: ${server_type} ${server_letter} :: \""
+    echo "+sv_hostname \"${BASE_HOSTNAME} ${veng_string}${veng_week[$week_num]}:: ${server_type} ${server_letter} ::\""
 }
 
 # Get vengeance value (wrapper for backward compatibility)
