@@ -8,32 +8,44 @@ CONSDIR="$SRCDIR/temp"
 
 #MENU FUNCTIONS - Menu_Window_Main, Menu_Window_Getlist
 
+#
+# Window_Create()
+# {
+#     WINDOWNAME="$1"
+#     ID=$2
+#     SESSIONNAME="$3"
+#
+#     if [ $ID -eq 0 ]; then
+#         echo "Creating first window for $WINDOWNAME in $SESSIONNAME..."
+#         screen -S $SESSIONNAME -p $ID -X title $WINDOWNAME
+#     else
+#         echo "Creating window for $WINDOWNAME $SESSIONNAME..."
+#         screen -S $SESSIONNAME -X screen -t $WINDOWNAME #2
+#     fi
+# }
+#
+Window_Create() {
 
-Window_Create()
-{
     WINDOWNAME="$1"
     ID=$2
     SESSIONNAME="$3"
-
     if [ $ID -eq 0 ]; then
         echo "Creating first window for $WINDOWNAME in $SESSIONNAME..."
-        screen -S $SESSIONNAME -p $ID -X title $WINDOWNAME
+        tmux rename-window -t $SESSIONNAME:0 $WINDOWNAME
     else
         echo "Creating window for $WINDOWNAME $SESSIONNAME..."
-        screen -S $SESSIONNAME -X screen -t $WINDOWNAME #2
+        tmux new-window -t $SESSIONNAME -n $WINDOWNAME
     fi
 }
 
-Window_Delete()
-{
+Window_Delete() {
     WINDOWNAME="$1"
     SESSIONNAME="$2"
     echo "Deleting window $WINDOWNAME for $SESSIONNAME..."
     screen -S $SESSIONNAME -p $WINDOWNAME -X quit
 }
 
-Window_Write()
-{
+Window_Write() {
     NAME="$1"
     SESSIONNAME="$2"
     COMMAND="$3"
@@ -42,15 +54,13 @@ Window_Write()
     screen -S $SESSIONNAME -p $NAME -X stuff "$COMMAND^M"
 }
 
-Window_GetCount()
-{
+Window_GetCount() {
     SESSIONNAME="$1"
     local -i WINCOUNT=$(screen -S $SESSIONNAME -Q windows | tr ' ' '\n' | grep -E '^[0-9]+$' | sort -n | tail -n1)
     echo $WINCOUNT
 }
 
-Window_GetName()
-{
+Window_GetName() {
     SESSIONNAME="$1"
     POSITION=$2
     local NAME=$(screen -S $SESSIONNAME -Q windows | awk -v pos="$POSITION" '{print $pos; exit}')
@@ -58,8 +68,7 @@ Window_GetName()
     echo $NAME
 }
 
-Window_SetList()
-{
+Window_SetList() {
     ID="$1"
     # ID2=$2
     declare -i FOUND
@@ -79,15 +88,15 @@ Window_SetList()
             # WINDALIST=($(Window_GetList "$ID"))
             declare -i countindex
             countindex=0
-            for ((i=0; i<=WINDOW_INFO["$ID,WINDOWCOUNT"]; i++)); do
-                countindex=$(($countindex+2))
+            for ((i = 0; i <= WINDOW_INFO["$ID,WINDOWCOUNT"]; i++)); do
+                countindex=$(($countindex + 2))
                 WINDOW_INFO["$ID,$i,WINDOWNAME"]=$(Window_GetName "$ID" $countindex)
             done
-                # Testing for Name Values
-                # for key in "${!WINDOW_INFO[@]}"; do
-                #     echo "Key: $key"
-                #     echo "Value: ${WINDOW_INFO[$key]}"
-                # done
+            # Testing for Name Values
+            # for key in "${!WINDOW_INFO[@]}"; do
+            #     echo "Key: $key"
+            #     echo "Value: ${WINDOW_INFO[$key]}"
+            # done
             Return_Main_Menu
         fi
 
@@ -98,7 +107,6 @@ Window_SetList()
     fi
     Error_Handler "Window_Getlist_Init_Proc" "Window" $FOUND
 }
-
 
 # Window_Check()
 # {
@@ -120,3 +128,4 @@ Window_SetList()
 #     echo "outputting to a file..."
 #     Window_Hardcopy_Handler "write" "$NAME" "$SESSIONNAME" ""
 # }
+

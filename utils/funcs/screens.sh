@@ -5,12 +5,22 @@
 # CHECK FUNCTIONS: N/A
 # MISC FUNCTIONS: N/A
 
+# Screen_Start() {
+#     NAME="$1"
+#     # Log file path
+#     log_file="/home/rampage/server_start.log"
+#     echo "Starting $NAME Screen Session..."
+#     screen -dmS $NAME
+#     sleep 1
+#     # Write_Menu "Server Start Initiated..." "" ""
+# }
+#
 Screen_Start() {
     NAME="$1"
     # Log file path
     log_file="/home/rampage/server_start.log"
-    echo "Starting $NAME Screen Session..."
-    screen -dmS $NAME
+    echo "Starting $NAME Tmux Session..."
+    tmux new-session -d -s $NAME
     sleep 1
     # Write_Menu "Server Start Initiated..." "" ""
 }
@@ -120,4 +130,3 @@ Screen_GetList() {
 #     SCREENLIST_ZANDRONUM["$ID"]=($(Screen_GetList "zandronum"))
 #     SCREENLIST_ZANDRONUM["SERVERS"]+=($(Screen_Check_Window "zandronum"))
 # }
-

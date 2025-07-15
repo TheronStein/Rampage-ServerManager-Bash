@@ -52,4 +52,5 @@ Boot_Servers_Veng() {
     Server_Start "game-b" 1 10691 "vengeance" $VENG_WEEKNUM
     Server_Start "prac-a" 2 10692 "vengeance" $VENG_WEEKNUM
     Server_Start "prac-b" 3 10693 "vengeance" $VENG_WEEKNUM
+    sleep 2
 }
