@@ -7,7 +7,12 @@
 # source wads.sh
 # source hostnames.sh
 
-## Updated Server_Start function with proper hostname generation
+# Function to clean multi-line strings (removes newlines and extra spaces)
+clean_string() {
+    echo "$1" | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//'
+}
+
+# Updated Server_Start function with proper hostname generation
 Server_Start() {
     local NAME="$1"
     local ID=$2
@@ -36,6 +41,8 @@ Server_Start() {
         echo "Starting Servers: $NAME | ID: $ID"
     fi
 
+    echo "Starting Server $NAME | ID: $ID ..."
+    echo "Server String is $SERVERSTRING"
     echo "Starting Server $NAME | ID: $ID ..."
     echo "Server String is $SERVERSTRING" # Define the commands to be executed in each screen window
     screen -S $SESSIONNAME -p $NAME -X stuff "$SERVERSTRING^M"
