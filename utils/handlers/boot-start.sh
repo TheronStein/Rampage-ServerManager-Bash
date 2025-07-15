@@ -19,8 +19,7 @@
 
 source $FUNCDIR/servers/start.sh
 
-Boot_Server_Proc()
-{
+Boot_Server_Proc() {
     Screen_Start "rampage"
     sleep 2
     Window_Create "priv" 0 "rampage"
@@ -30,7 +29,6 @@ Boot_Server_Proc()
     Window_Create "hns" 4 "rampage"
     Window_Create "veng" 5 "rampage"
     Window_Create "lg" 6 "rampage"
-    Window_Create "rvr" 7 "rampage"
     sleep 2
     Server_Start "priv" 0 10666 "rampage"
     Server_Start "pub" 1 10667 "rampage"
@@ -39,6 +37,19 @@ Boot_Server_Proc()
     Server_Start "hns" 4 10670 "rampage"
     Server_Start "veng" 5 10671 "rampage"
     Server_Start "lg" 6 10672 "rampage"
-    Server_Start "rvr" 7 10673 "rampage"
     sleep 2
+}
+
+Boot_Servers_Veng() {
+    Screen_Start "vengeance"
+    sleep 2
+    Window_Create "prac-a" 0 "vengeance"
+    Window_Create "prac-b" 1 "vengeance"
+    Window_Create "game-a" 2 "vengeance"
+    Window_Create "game-b" 3 "vengeance"
+    sleep2
+    Server_Start "prac-a" 0 10690 "vengeance"
+    Server_Start "prac-b" 1 10691 "vengeance"
+    Server_Start "game-a" 2 10692 "vengeance"
+    Server_Start "game-b" 3 10693 "vengeance"
 }

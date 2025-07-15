@@ -21,9 +21,7 @@
 # source $FUNCDIR/servers/reset.sh
 # source $FUNCDIR/servers/check.sh
 
-
 #!/bin/bash
-
 
 # Explicitly set the PATH variable
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -32,9 +30,7 @@ set +e
 declare SRCDIR="$HOME/ServerManager"
 source $SRCDIR/utils/global-import.sh
 
-
-Program_Start()
-{
+Program_Start() {
     echo "$SRCDIR"
     echo "$MENUDIR"
     echo "$DEFDIR"
@@ -43,18 +39,22 @@ Program_Start()
     echo "$LOGDIR"
     echo "$TEMPDIR"
     # Main execution
-    if  [ $ARG1 -eq 1 ]; then
-       Boot_Server_Proc
-       Program_Exit
+    if [ $ARG1 -eq 1 ]; then
+        Boot_Server_Proc
+        Program_Exit
     elif [ -z $ARG1 ]; then
-         ${MENU_NAMES["MAIN,FUNC"]}
+        ${MENU_NAMES["MAIN,FUNC"]}
         Program_Exit
     elif [ $ARG1 -eq 2 ]; then
         Hourly_Check_Proc
         Program_Exit
-    elif [ $ARG -eq 3 ]; then
-	Custom_Server_Proc
-	Program_Exit
+    elif [ $ARG1 -eq 3 ]; then
+        Boot_Server_Proc
+        Boot_Servers_Veng
+        Program_Exit
+        #    elif [ $ARG -eq 3 ]; then
+        # Custom_Server_Proc
+        # Program_Exit
     else
         Error_Handler "Invalid Argument" "Program_Start" "${MENU_NAMES["MAIN,FUNC"]}" "${MENU_NAMES["MAIN,STRING"]}" "$ARG1"
     fi
@@ -62,11 +62,10 @@ Program_Start()
     #Error_Handler "Out of Bounds" "Program Start" "${MENU_NAMES["MAIN,FUNCTION"]}" "${MENU_NAMES["MAIN,STRING"]}" "$ARG1"
 }
 
-Program_Error_Exit()
-{
-    $TYPE="$1"
-    $FUNCTION="$2"
-    $MESSAGE="$3"
+Program_Error_Exit() {
+    TYPE="$1"
+    FUNCTION="$2"
+    MESSAGE="$3"
     Write_Menu $TYPE
     sleep 2
     echo "From: $FUNCTION"
@@ -76,8 +75,7 @@ Program_Error_Exit()
     Program_Exit
 }
 
-Program_Exit()
-{
+Program_Exit() {
     Write_Divider
     echo "Exiting Program..."
     Write_Divider
