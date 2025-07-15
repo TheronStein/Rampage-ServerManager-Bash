@@ -3,18 +3,20 @@ Server_Start() {
     ID=$2
     PORT=$3
     SESSIONNAME="$4"
+    WEEKNUM=$5
     screen -S $SESSIONNAME -p $NAME -X stuff "cd /home/rampage/zandronum3.2\n"
-
     if [ $SESSIONNAME == "rampage" ]; then
         echo "Starting Rampage Servers: $NAME | ID: $ID"
         SERVERSTRING="./zandronum-server -port $PORT -file ${wadlist[$ID]} ${configs[$ID]}  ${hostnames[$ID]}"
     elif [ $SESSIONNAME == "vengeance" ]; then
         if [ $ID -lt 2 ]; then
             echo "Starting Vengeance Game Servers: $NAME | ID: $ID"
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} ${hostnames[$ID]}"
+            result=$(get_veng_value $WEEKNUM $ID)
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} ${result}"
         else
             echo "Starting Vengeance Practice Servers: $NAME | ID: $ID"
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[1]} ${veng_configs[1]} ${hostnames[$ID]}"
+            result=$(get_veng_value $WEEKNUM $ID)
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} ${result}"
         fi
     else
         echo "Starting Servers: $NAME | ID: $ID"
@@ -27,6 +29,13 @@ Server_Start() {
     echo "..."
     sleep 2
     echo "..."
+}
+
+get_veng_value() {
+    local weeknum=$1
+    local id=$2
+    local var_name="veng_${veng_season[${weeknum}]}[$id]"
+    eval "echo \${$var_name}"
 }
 
 # Function to execute the zandronum command in the specified window

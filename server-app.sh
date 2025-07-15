@@ -50,7 +50,7 @@ Program_Start() {
         Program_Exit
     elif [ $ARG1 -eq 3 ]; then
         Boot_Server_Proc
-        Boot_Servers_Veng
+        Boot_Servers_Veng $VENG_WEEKNUM
         Program_Exit
         #    elif [ $ARG -eq 3 ]; then
         # Custom_Server_Proc
