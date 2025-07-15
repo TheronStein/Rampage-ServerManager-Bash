@@ -26,7 +26,7 @@ configs=(
 
 #Veng
 veng_configs=(
-    "+exec ${GLOBAL}/dmflags.cfg ${GLOBAL}/svar.cfg ${MODES}/ctf.cfg ${VENG}/veng.cfg ${VENG}/veng_\${veng_season[\$VENG_WEEKNUM]}.cfg +map map00 +compatflags 64"
+    "+exec ${GLOBAL}/dmflags.cfg ${GLOBAL}/svar.cfg ${MODES}/ctf.cfg ${VENG}/veng.cfg ${VENG}/veng_\${veng_season[\$VENG_WEEKNUM]}.cfg +compatflags 64"
     "+exec ${GLOBAL}/dmflags.cfg ${GLOBAL}/svar.cfg ${MODES}/ctf.cfg ${VENG}/veng.cfg ${VENG}/veng_\${veng_season[\$VENG_WEEKNUM]}.cfg +map LOCKER +compatflags 64"
 )
 
