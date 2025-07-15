@@ -39,7 +39,7 @@ Server_Start() {
             local week_name="${veng_season[$VENG_WEEKNUM]}"
             local config_with_week="${veng_configs[0]/\$\{veng_season\[\$VENG_WEEKNUM\]\}/$week_name}"
             local config_clean=$(clean_string "$config_with_week")
-            SERVERSTRING="./zandronum-server -port ${PORT} -file ${veng_wadlist[0]} ${veng_configs[0]} ${hostname_string}"
+            SERVERSTRING="./zandronum-server -port ${PORT} -file ${veng_wadlist[0]} ${config_clean} ${hostname_string}"
         fi
     else
         echo "Starting Servers: ${NAME} | ID: ${ID}"
