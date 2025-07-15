@@ -27,12 +27,12 @@ veng_season=(
 veng_string='[VENGEANCE VI]'
 
 veng_week=(
-    'Week 1 : MAP52 | MAP80'
-    'Week 2 : MAP93 | MAP10'
-    'Week 3 : MAP72 | MAP35'
-    'Week 4 : MAP79 | MAP68'
-    'Semi Finals - XXX vs XXX'
-    'Finals : XXX vs XXX'
+    '- Week 1 = MAP52 : MAP80'
+    '- Week 2 = MAP93 : MAP10'
+    '- Week 3 = MAP72 : MAP35'
+    '- Week 4 = MAP79 : MAP68'
+    '- Semi Finals = XXX vs XXX'
+    '- Finals = XXX vs XXX'
 )
 
 # Build regular server hostname
