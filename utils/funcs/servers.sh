@@ -45,8 +45,8 @@ Server_Start() {
 
     echo "Starting Server $NAME | ID: $ID ..."
     echo "Server String is $SERVERSTRING"
-    screen -S $SESSIONNAME -p $NAME -X stuff "$SERVERSTRING^M"
     sleep 2
+    screen -S $SESSIONNAME -p $NAME -X stuff "$SERVERSTRING"$'\r'
     echo "..."
     sleep 2
     echo "..."
