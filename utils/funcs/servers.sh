@@ -19,7 +19,7 @@ Server_Start() {
         if [ $ID -lt 2 ]; then
             echo "Starting Vengeance Game Servers: $NAME | ID: $ID"
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} $hostname_string"
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[1]} ${veng_configs[1]} $hostname_string"
         else
             echo "Starting Vengeance Practice Servers: $NAME | ID: $ID"
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)

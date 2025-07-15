@@ -17,9 +17,8 @@ configs=(
     '+exec /var/www/chaoscore/configs/global/dmflags.cfg /var/www/chaoscore/configs/global/svar.cfg /var/www/chaoscore/configs/modes/duel.cfg /var/www/chaoscore/configs/duel40.cfg /var/www/chaoscore/configs/modes/lg.cfg +map start +compatflags 536871714'
 )
 
+#Veng
 veng_configs=(
-    #Veng Practice
-    '/var/www/chaoscore/wads/rampagepriv-v6-1.pk3 /var/www/chaoscore/wads/vengeancemaps_v1.06.pk3 /var/www/chaoscore/wads/vengeanceweapons_v1.53.pk3 /var/www/chaoscore/wads/rampage-stats-fix.pk3 /var/www/chaoscore/wads/ctfcap2d.pk3 /var/www/chaoscore/wads/hudtimer_v4fix.pk3 /var/www/chaoscore/wads/zandrospree2rc2.pk3 /var/www/chaoscore/wads/odaflagx.pk3'
-    #Veng Game
-    '/var/www/chaoscore/wads/rampagepriv-v6-1.pk3 /var/www/chaoscore/wads/vengeancemaps_v1.06.pk3 /var/www/chaoscore/wads/vengeanceweapons_v1.53.pk3 /var/www/chaoscore/wads/rampage-stats-fix.pk3 /var/www/chaoscore/wads/rampage_lockers.pk3 /var/www/chaoscore/wads/ctfcap2d.pk3 /var/www/chaoscore/wads/hudtimer_v4fix.pk3 /var/www/chaoscore/wads/zandrospree2rc2.pk3 /var/www/chaoscore/wads/odaflagx.pk3'
+    '+exec /var/www/chaoscore/configs/global/dmflags.cfg /var/www/chaoscore/configs/global/svar.cfg /var/www/chaoscore/configs/modes/ctf.cfg /var/www/chaoscore/configs/priv.cfg +map map00 +compatflags 64'
+    '+exec /var/www/chaoscore/configs/global/dmflags.cfg /var/www/chaoscore/configs/global/svar.cfg /var/www/chaoscore/configs/modes/ctf.cfg /var/www/chaoscore/configs/priv.cfg +map LOCKER +compatflags 64'
 )
