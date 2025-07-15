@@ -37,7 +37,7 @@ Server_Start() {
         if [ $ID -lt 2 ]; then
             echo "Starting Vengeance Game Servers: $NAME | ID: $ID"
             local week_name="${veng_season[$VENG_WEEKNUM]}"
-            local config_with_week="${veng_configs[0]/\$\{veng_season\[\$VENG_WEEKNUM\]\}/$week_name}"
+            local config_with_week="${veng_configs[1]/\$\{veng_season\[\$VENG_WEEKNUM\]\}/$week_name}"
             local config_clean=$(clean_string "$config_with_week")
             local wad_clean=$(clean_string "${veng_wadlist[1]}")
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
@@ -45,7 +45,7 @@ Server_Start() {
         else
             echo "Starting Vengeance Practice Servers: $NAME | ID: $ID"
             local week_name="${veng_season[$VENG_WEEKNUM]}"
-            local config_with_week="${veng_configs[1]/\$\{veng_season\[\$VENG_WEEKNUM\]\}/$week_name}"
+            local config_with_week="${veng_configs[0]/\$\{veng_season\[\$VENG_WEEKNUM\]\}/$week_name}"
             local config_clean=$(clean_string "$config_with_week")
             local wad_clean=$(clean_string "${veng_wadlist[0]}")
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
