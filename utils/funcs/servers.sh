@@ -28,13 +28,20 @@ Server_Start() {
         SERVERSTRING="./zandronum-server -port $PORT -file ${wadlist[$ID]} ${configs[$ID]} $hostname_string"
 
     elif [ $SESSIONNAME == "vengeance" ]; then
+        # Set VENG_WEEKNUM for use in config expansion
+        export VENG_WEEKNUM=$WEEKNUM
+
         if [ $ID -lt 2 ]; then
             echo "Starting Vengeance Game Servers: $NAME | ID: $ID"
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
+            # Use eval to expand the variables in veng_configs
+            # local config_expanded=$(eval echo "\"${veng_configs[0]}\"")
             SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[1]} ${veng_configs[1]} $hostname_string"
         else
             echo "Starting Vengeance Practice Servers: $NAME | ID: $ID"
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
+            # Use eval to expand the variables in veng_configs
+            # local config_expanded=$(eval echo "\"${veng_configs[1]}\"")
             SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} $hostname_string"
         fi
     else
@@ -43,8 +50,6 @@ Server_Start() {
 
     echo "Starting Server $NAME | ID: $ID ..."
     echo "Server String is $SERVERSTRING"
-    echo "Starting Server $NAME | ID: $ID ..."
-    echo "Server String is $SERVERSTRING" # Define the commands to be executed in each screen window
     screen -S $SESSIONNAME -p $NAME -X stuff "$SERVERSTRING^M"
     sleep 2
     echo "..."
