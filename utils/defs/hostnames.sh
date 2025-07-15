@@ -1,6 +1,7 @@
 #!/bin/bash
+# hostnames.sh - Configuration and functions for building server hostname strings
+
 BASE_HOSTNAME=":: [NY] = [RAMPAGE] ="
-hostname='+sv_hostname ${BASE_HOSTNAME}'
 
 # Regular server types
 servers=(
@@ -12,8 +13,6 @@ servers=(
     '[Vengeance Priv]'
     '[LG Duel]'
 )
-
-veng_string='[VENGEANCE VI]'
 
 # Vengeance tournament configuration
 veng_season=(
@@ -36,19 +35,11 @@ veng_week=(
     ' - Finals - XXX vs XXX'
 )
 
-# hostnames2=(
-#     '+sv_hostname ":: [NY] = [DOOMRAMPAGE.ORG] = [Priv CTF] ::"'
-#     '+sv_hostname ":: [NY] = [DOOMRAMPAGE.ORG] = [Public CTF] ::"'
-#     '+sv_hostname ":: [NY] = [DOOMRAMPAGE.ORG] =  [Duel40] ::"'
-#     '+sv_hostname ":: [NY] = [DOOMRAMPAGE.ORG] = [Rivals Duel] ::"'
-#     '+sv_hostname ":: [NY] = [DOOMRAMPAGE.ORG] = [Hide n Seek] ::"'
-# )
-
 # Build regular server hostname
 # Usage: build_regular_hostname <server_id>
 build_regular_hostname() {
     local server_id=$1
-    echo '${hostname} ${servers[$server_id]} ::\"'
+    echo "+sv_hostname \"${BASE_HOSTNAME} ${servers[$server_id]} ::\""
 }
 
 # Build vengeance hostname
@@ -74,7 +65,7 @@ build_vengeance_hostname() {
     fi
 
     # Build the complete hostname
-    echo '${hostname} ${veng_string}${veng_week[$week_num]} :: ${server_type} ${server_letter} :: \"'
+    echo "+sv_hostname \"${BASE_HOSTNAME} ${veng_string}${veng_week[$week_num]}:: ${server_type} ${server_letter} :: \""
 }
 
 # Get vengeance value (wrapper for backward compatibility)
