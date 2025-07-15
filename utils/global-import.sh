@@ -4,9 +4,9 @@
 # source $SRCDIR/Server-AutoStart.sh
 #utils
 
-declare MENUDIR="$SRCDIR/menus"
-declare DEFDIR="$SRCDIR/utils/definitions"
-declare FUNCDIR="$SRCDIR/utils/functions"
+# declare MENUDIR="$SRCDIR/menus"
+declare DEFDIR="$SRCDIR/utils/defs"
+declare FUNCDIR="$SRCDIR/utils/funcs"
 declare HANDIR="$SRCDIR/utils/handlers"
 declare HELPDIR="$SRCDIR/utils/helpers"
 
@@ -14,15 +14,16 @@ declare HELPDIR="$SRCDIR/utils/helpers"
 declare LOGDIR="$SRCDIR/logs"
 declare TEMPDIR="$SRCDIR/temp"
 
-source $MENUDIR/main.sh
-source $MENUDIR/screens.sh
+# source $MENUDIR/main.sh
+# source $MENUDIR/screens.sh
 
 source $DEFDIR/configs.sh
-source $DEFDIR/files.sh
-source $DEFDIR/menus.sh
-source $DEFDIR/screens.sh
-source $DEFDIR/servers.sh
-source $DEFDIR/windows.sh
+source $DEFDIR/hostnames.sh
+# source $DEFDIR/files.sh
+# source $DEFDIR/menus.sh
+# source $DEFDIR/screens.sh
+# source $DEFDIR/servers.sh
+# source $DEFDIR/windows.sh
 
 source $HELPDIR/menuformat.sh
 source $HELPDIR/stringformat.sh
@@ -34,7 +35,8 @@ source $HANDIR/screens.sh
 
 source $FUNCDIR/windows.sh
 source $FUNCDIR/screens.sh
-source $FUNCDIR/servers/start.sh
+source $FUNCDIR/servers.sh
 #source $FUNCDIR/servers/stop.sh
-source $FUNCDIR/servers/reset.sh
-source $FUNCDIR/servers/check.sh
+# source $FUNCDIR/servers/reset.sh
+# source $FUNCDIR/servers/check.sh
+

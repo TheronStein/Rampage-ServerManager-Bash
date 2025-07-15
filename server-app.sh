@@ -1,3 +1,4 @@
+#!/bin/bash
 # source $MENUDIR/main.sh
 
 # source $DEFDIR/config.sh
@@ -21,8 +22,6 @@
 # source $FUNCDIR/servers/reset.sh
 # source $FUNCDIR/servers/check.sh
 
-#!/bin/bash
-
 # Explicitly set the PATH variable
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 set +e
@@ -31,13 +30,13 @@ declare SRCDIR="$HOME/ServerManager"
 source $SRCDIR/utils/global-import.sh
 
 Program_Start() {
-    echo "$SRCDIR"
-    echo "$MENUDIR"
-    echo "$DEFDIR"
-    echo "$FUNCDIR"
-    echo "$HANDIR"
-    echo "$LOGDIR"
-    echo "$TEMPDIR"
+    # echo "$SRCDIR"
+    # echo "$MENUDIR"
+    # echo "$DEFDIR"
+    # echo "$FUNCDIR"
+    # echo "$HANDIR"
+    # echo "$LOGDIR"
+    # echo "$TEMPDIR"
     # Main execution
     if [ $ARG1 -eq 1 ]; then
         Boot_Server_Proc
@@ -85,5 +84,4 @@ Program_Exit() {
 
 ARG1=$1
 Program_Start $ARG1
-
-Program_Error_Exit "App Exeuction: Out of Bounds" "Reached out of bounds in main execution..."
+Program_Error_Exit "App Exeuction: Out of Bounds" "None" "Reached out of bounds in main execution..."

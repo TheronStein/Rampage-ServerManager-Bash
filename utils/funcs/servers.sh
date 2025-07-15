@@ -1,29 +1,36 @@
+# source utils/defs/hostnames.sh
+
+# Updated Server_Start function with proper hostname generation
 Server_Start() {
-    NAME="$1"
-    ID=$2
-    PORT=$3
-    SESSIONNAME="$4"
-    WEEKNUM=$5
+    local NAME="$1"
+    local ID=$2
+    local PORT=$3
+    local SESSIONNAME="$4"
+    local WEEKNUM=$5
+
     screen -S $SESSIONNAME -p $NAME -X stuff "cd /home/rampage/zandronum3.2\n"
+
     if [ $SESSIONNAME == "rampage" ]; then
         echo "Starting Rampage Servers: $NAME | ID: $ID"
-        SERVERSTRING="./zandronum-server -port $PORT -file ${wadlist[$ID]} ${configs[$ID]}  ${hostnames[$ID]}"
+        local hostname_string=$(build_regular_hostname $ID)
+        SERVERSTRING="./zandronum-server -port $PORT -file ${wadlist[$ID]} ${configs[$ID]} $hostname_string"
+
     elif [ $SESSIONNAME == "vengeance" ]; then
         if [ $ID -lt 2 ]; then
             echo "Starting Vengeance Game Servers: $NAME | ID: $ID"
-            result=$(get_veng_value $WEEKNUM $ID)
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} ${result}"
+            local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} $hostname_string"
         else
             echo "Starting Vengeance Practice Servers: $NAME | ID: $ID"
-            result=$(get_veng_value $WEEKNUM $ID)
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} ${result}"
+            local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} $hostname_string"
         fi
     else
         echo "Starting Servers: $NAME | ID: $ID"
     fi
 
     echo "Starting Server $NAME | ID: $ID ..."
-    echo "Server String is $SERVERSTRING^M"
+    echo "Server String is $SERVERSTRING"
     screen -S $SESSIONNAME -p $NAME -X stuff "$SERVERSTRING^M"
     sleep 2
     echo "..."
@@ -31,11 +38,20 @@ Server_Start() {
     echo "..."
 }
 
-get_veng_value() {
-    local weeknum=$1
-    local id=$2
-    local var_name="veng_${veng_season[${weeknum}]}[$id]"
-    eval "echo \${$var_name}"
+# Function to test hostname generation
+test_hostnames() {
+    echo "Testing Regular Server Hostnames:"
+    for i in "${!servers[@]}"; do
+        echo "Server $i: $(build_regular_hostname $i)"
+    done
+
+    echo -e "\nTesting Vengeance Server Hostnames:"
+    for week in "${!veng_week[@]}"; do
+        echo "Week $((week + 1)):"
+        for server_id in {0..3}; do
+            echo "  Server $server_id: $(build_vengeance_hostname $week $server_id)"
+        done
+    done
 }
 
 # Function to execute the zandronum command in the specified window
