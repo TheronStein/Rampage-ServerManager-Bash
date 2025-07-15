@@ -19,6 +19,7 @@ declare TEMPDIR="$SRCDIR/temp"
 
 source $DEFDIR/configs.sh
 source $DEFDIR/hostnames.sh
+source $DEFDIR/wadlist.sh
 # source $DEFDIR/files.sh
 # source $DEFDIR/menus.sh
 # source $DEFDIR/screens.sh
