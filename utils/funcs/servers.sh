@@ -1,5 +1,12 @@
 # source utils/defs/hostnames.sh
 
+# server_manager.sh - Main server management functions
+
+# Source required configuration files
+source configs.sh
+source wads.sh
+source hostnames.sh
+
 # Updated Server_Start function with proper hostname generation
 Server_Start() {
     local NAME="$1"
@@ -16,14 +23,21 @@ Server_Start() {
         SERVERSTRING="./zandronum-server -port $PORT -file ${wadlist[$ID]} ${configs[$ID]} $hostname_string"
 
     elif [ $SESSIONNAME == "vengeance" ]; then
+        # Set VENG_WEEKNUM for use in config expansion
+        export VENG_WEEKNUM=$WEEKNUM
+
         if [ $ID -lt 2 ]; then
             echo "Starting Vengeance Game Servers: $NAME | ID: $ID"
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[1]} ${veng_configs[1]} $hostname_string"
+            # Use eval to expand the variables in veng_configs
+            local config_expanded=$(eval echo "\"${veng_configs[1]}\"")
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[1]} $config_expanded $hostname_string"
         else
             echo "Starting Vengeance Practice Servers: $NAME | ID: $ID"
             local hostname_string=$(build_vengeance_hostname $WEEKNUM $ID)
-            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} ${veng_configs[0]} $hostname_string"
+            # Use eval to expand the variables in veng_configs
+            local config_expanded=$(eval echo "\"${veng_configs[0]}\"")
+            SERVERSTRING="./zandronum-server -port $PORT -file ${veng_wadlist[0]} $config_expanded $hostname_string"
         fi
     else
         echo "Starting Servers: $NAME | ID: $ID"
@@ -36,22 +50,6 @@ Server_Start() {
     echo "..."
     sleep 2
     echo "..."
-}
-
-# Function to test hostname generation
-test_hostnames() {
-    echo "Testing Regular Server Hostnames:"
-    for i in "${!servers[@]}"; do
-        echo "Server $i: $(build_regular_hostname $i)"
-    done
-
-    echo -e "\nTesting Vengeance Server Hostnames:"
-    for week in "${!veng_week[@]}"; do
-        echo "Week $((week + 1)):"
-        for server_id in {0..3}; do
-            echo "  Server $server_id: $(build_vengeance_hostname $week $server_id)"
-        done
-    done
 }
 
 # Function to execute the zandronum command in the specified window
@@ -76,7 +74,8 @@ test_hostnames() {
 # $SERV_INFO["$name,STATUS"]=$($start_server("$name" ${id} "$SERV_INFO["$name,STATUS"]" "$SERV_INFO["$name,PORT"]"))
 # sleep 1
 # echo ""
-# Kill existing zandronum sessions and log the actions
+## server_manager.sh - Main server management functions
+
 #Screen -ls | awk '/\.zandronum/ {print $1}' | xargs -I {} screen -X -S {} quit >> "$log_file" 2>&1
 
 # Create a new detached screen session named "zandronum" and log the action
