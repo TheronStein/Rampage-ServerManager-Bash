@@ -26,7 +26,7 @@
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 set +e
 
-declare SRCDIR="$HOME/ServerManager"
+declare SRCDIR="."
 source $SRCDIR/utils/global-import.sh
 
 Program_Start() {

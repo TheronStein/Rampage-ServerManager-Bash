@@ -17,7 +17,7 @@
 #     fi
 # }
 
-source $FUNCDIR/servers/start.sh
+source $FUNCDIR/servers.sh
 
 Boot_Server_Proc() {
     Screen_Start "rampage"

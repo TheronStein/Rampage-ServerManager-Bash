@@ -39,4 +39,3 @@ source $FUNCDIR/servers.sh
 #source $FUNCDIR/servers/stop.sh
 # source $FUNCDIR/servers/reset.sh
 # source $FUNCDIR/servers/check.sh
-
