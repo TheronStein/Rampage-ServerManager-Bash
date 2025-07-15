@@ -5,19 +5,17 @@
 # CHECK FUNCTIONS: N/A
 # MISC FUNCTIONS: N/A
 
-Screen_Start()
-{
+Screen_Start() {
     NAME="$1"
     # Log file path
     log_file="/home/rampage/server_start.log"
     echo "Starting $NAME Screen Session..."
     screen -dmS $NAME
     sleep 1
-    Write_Menu "Server Start Initiated..." "" ""
+    # Write_Menu "Server Start Initiated..." "" ""
 }
 
-Screen_Stop()
-{
+Screen_Stop() {
     REQ=$1
     ID=$2
     local -a SCRNLIST
@@ -57,43 +55,41 @@ Screen_Stop()
     Write_Menu "Server Stop Process Completed..." "" ""
 }
 
-Screen_Count()
-{
+Screen_Count() {
     TYPE="$1"
-        declare -i SCREENNUM
-        if [ $TYPE = "all" ]; then
-            SCREENNUM=$(screen -ls | wc -l)
-            SCREENNUM=$((SCREENNUM-2))
-        fi
-        if [ $TYPE = "rampage" ]; then
-            SCREENNUM=$(screen -ls | grep "rampage" | wc -l)
-            SCREENNUM+=$(screen -ls | grep "Rampage" | wc -l)
-            SCREENNUM+=$(screen -ls | grep "RAMPAGE" | wc -l)
-        fi
+    declare -i SCREENNUM
+    if [ $TYPE = "all" ]; then
+        SCREENNUM=$(screen -ls | wc -l)
+        SCREENNUM=$((SCREENNUM - 2))
+    fi
+    if [ $TYPE = "rampage" ]; then
+        SCREENNUM=$(screen -ls | grep "rampage" | wc -l)
+        SCREENNUM+=$(screen -ls | grep "Rampage" | wc -l)
+        SCREENNUM+=$(screen -ls | grep "RAMPAGE" | wc -l)
+    fi
     echo $SCREENNUM
 }
 
-Screen_GetList()
-{
+Screen_GetList() {
     TYPE="$1"
     declare -a screen_array
 
     if [ $TYPE = "all" ]; then
         while IFS= read -r line; do
             screen_array+=("$line")
-        done < <(screen -ls | cut -d "." -f1)  # awk '{print $1}'
+        done < <(screen -ls | cut -d "." -f1) # awk '{print $1}'
     fi
 
     if [ $TYPE = "rampage" ]; then
         while IFS= read -r line; do
             screen_array+=("$line")
-        done < <(screen -ls | grep "rampage" | cut -d "." -f1)  # awk '{print $1}'
+        done < <(screen -ls | grep "rampage" | cut -d "." -f1) # awk '{print $1}'
         while IFS= read -r line; do
             screen_array+=("$line")
-        done < <(screen -ls | grep "Rampage" | cut -d "." -f1)  # awk '{print $1}'
+        done < <(screen -ls | grep "Rampage" | cut -d "." -f1) # awk '{print $1}'
         while IFS= read -r line; do
             screen_array+=("$line")
-        done < <(screen -ls | grep "RAMPAGE" | cut -d "." -f1)  # awk '{print $1}'
+        done < <(screen -ls | grep "RAMPAGE" | cut -d "." -f1) # awk '{print $1}'
     fi
 
     for i in "${!screen_array[@]}"; do
@@ -124,3 +120,4 @@ Screen_GetList()
 #     SCREENLIST_ZANDRONUM["$ID"]=($(Screen_GetList "zandronum"))
 #     SCREENLIST_ZANDRONUM["SERVERS"]+=($(Screen_Check_Window "zandronum"))
 # }
+
