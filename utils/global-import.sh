@@ -26,8 +26,8 @@ source $DEFDIR/wadlist.sh
 # source $DEFDIR/servers.sh
 # source $DEFDIR/windows.sh
 
-source $HELPDIR/menuformat.sh
-source $HELPDIR/stringformat.sh
+# source $HELPDIR/menuformat.sh
+# source $HELPDIR/stringformat.sh
 
 source $HANDIR/init.sh
 source $HANDIR/boot-start.sh
