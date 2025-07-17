@@ -1,8 +1,10 @@
 #!/usr/bin/env zsh
 set -e
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
 source ~/.zprofile
+
+declare SRCDIR="."
+source $SRCDIR/utils/global-import.sh
 
 # 1) If VENG_WEEKNUM isn’t already exported, try to read it from a file:
 if [[ -z "${VENG_WEEKNUM:-}" ]]; then
@@ -30,9 +32,6 @@ echo "$(date) ➔ WEEKNUM=$WEEKNUM   ID=$ID" >>"$HOME/ServerManager/debug.log"
 # 6) Call your hostname builder (example):
 build_vengeance_hostname "$WEEKNUM" "$ID"
 # …rest of your startup logic…
-
-declare SRCDIR="."
-source $SRCDIR/utils/global-import.sh
 
 Program_Start() {
     # echo "$SRCDIR"
