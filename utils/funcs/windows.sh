@@ -1,29 +1,4 @@
-CONSDIR="$SRCDIR/temp"
-
-# HANDLER FUNCTIONS: Window_Create
-# GET FUNCTIONS: Window_GetNames, Window_GetCount
-# SET FUNCTIONS: Window_List_MapToSessionID
-# CHECK FUNCTIONS: Window_IsServer_Check, Window_IsActive_Check
-# MISC FUNCTIONS: Window_Write_PlayerInfo
-
-#MENU FUNCTIONS - Menu_Window_Main, Menu_Window_Getlist
-
-#
-# Window_Create()
-# {
-#     WINDOWNAME="$1"
-#     ID=$2
-#     SESSIONNAME="$3"
-#
-#     if [ $ID -eq 0 ]; then
-#         echo "Creating first window for $WINDOWNAME in $SESSIONNAME..."
-#         screen -S $SESSIONNAME -p $ID -X title $WINDOWNAME
-#     else
-#         echo "Creating window for $WINDOWNAME $SESSIONNAME..."
-#         screen -S $SESSIONNAME -X screen -t $WINDOWNAME #2
-#     fi
-# }
-#
+#!/bin/bash
 Window_Create() {
 
     WINDOWNAME="$1"
@@ -128,4 +103,4 @@ Window_SetList() {
 #     echo "outputting to a file..."
 #     Window_Hardcopy_Handler "write" "$NAME" "$SESSIONNAME" ""
 # }
-
+:
