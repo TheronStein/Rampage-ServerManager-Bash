@@ -58,7 +58,7 @@ build_vengeance_hostname() {
 
     # Determine if it's Practice or Game server
     local server_type
-    if [ "$server_id" -lt 2 ]; then
+    if [[ "$server_id" =~ ^[0-9]+$ ]] && [ "$server_id" -lt 2 ]; then
         server_type="Game"
     else
         server_type="Practice"
