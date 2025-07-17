@@ -47,25 +47,30 @@ build_regular_hostname() {
 build_vengeance_hostname() {
     local week_num=$1
     local server_id=$2
-    local server_letter
+    local server_letter server_type
+
+    # ensure we have a numeric server_id
+    if ! [[ "$server_id" =~ ^[0-9]+$ ]]; then
+        echo "ERROR: server_id must be a number, got '$server_id'" >&2
+        return 1
+    fi
 
     # Determine server letter (A or B)
-    if [ $((server_id % 2)) -eq 0 ]; then
+    if ((server_id % 2 == 0)); then
         server_letter="A"
     else
         server_letter="B"
     fi
 
-    # Determine if it's Practice or Game server
-    local server_type
-    if [ ${server_id} -lt 2 ]; then
+    # Determine if it's Game (<2) or Practice (>=2)
+    if ((server_id < 2)); then
         server_type="Game"
     else
         server_type="Practice"
     fi
 
-    # Build the complete hostname
-    printf "+sv_hostname \"%s %s%s:: %s %s ::\"" "${BASE_HOSTNAME}" "${veng_string}" "${veng_week[$week_num]}" "${server_type}" "${server_letter}"
+    # Build and echo your hostname
+    echo "${week_num}_${server_type}_${server_letter}"
 }
 
 # Get vengeance value (wrapper for backward compatibility)
