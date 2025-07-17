@@ -2,7 +2,7 @@
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 source ~/.zprofile
 
-declare SRCDIR="."
+# declare SRCDIR="."
 source $SRCDIR/utils/global-import.sh
 set -e
 
