@@ -1,33 +1,35 @@
-#!/bin/bash
-# source $MENUDIR/main.sh
-
-# source $DEFDIR/config.sh
-# source $DEFDIR/files.sh
-# source $DEFDIR/menus.sh
-# source $DEFDIR/screens.sh
-# source $DEFDIR/servers.sh
-# source $DEFDIR/windows.sh
-
-# source $HELPDIR/menuformat.sh
-# source $HELPDIR/stringformat.sh
-
-# source $HANDIR/init.sh
-# source $HANDIR/timed/boot-start.sh
-# source $HANDIR/timed/hourly-check.sh
-
-# source $FUNCDIR/windows.sh
-# source $FUNCDIR/screens.sh
-# source $FUNCDIR/servers/start.sh
-# source $FUNCDIR/servers/stop.sh
-# source $FUNCDIR/servers/reset.sh
-# source $FUNCDIR/servers/check.sh
-
-# Explicitly set the PATH variable
+#!/usr/bin/env zsh
+set -e
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-source ~/.zprofile
-set +e
 
-WEEKNUM=${VENG_WEEKNUM}:-0
+source ~/.zprofile
+
+# 1) If VENG_WEEKNUM isn’t already exported, try to read it from a file:
+if [[ -z "${VENG_WEEKNUM:-}" ]]; then
+    WEEKNUM_FILE="$HOME/ServerManager/VENG_WEEKNUM.txt"
+    if [[ -r "$WEEKNUM_FILE" ]]; then
+        VENG_WEEKNUM="$(<"$WEEKNUM_FILE")"
+    else
+        echo "Warning: VENG_WEEKNUM not set and $WEEKNUM_FILE missing; defaulting to 0" >&2
+        VENG_WEEKNUM=0
+    fi
+fi
+
+# 2) Now WEEKNUM is always defined:
+WEEKNUM=$VENG_WEEKNUM
+
+# 3) Pull the server ID from the first argument:
+ID="$1"
+
+# 4) (Optional) Strip any non-digits just in case:
+ID="${ID//[^0-9]/}"
+
+# 5) Debug log:
+echo "$(date) ➔ WEEKNUM=$WEEKNUM   ID=$ID" >>"$HOME/ServerManager/debug.log"
+
+# 6) Call your hostname builder (example):
+build_vengeance_hostname "$WEEKNUM" "$ID"
+# …rest of your startup logic…
 
 declare SRCDIR="."
 source $SRCDIR/utils/global-import.sh
@@ -94,3 +96,29 @@ Program_Exit() {
 ARG1=$1
 Program_Start $ARG1
 Program_Error_Exit "App Exeuction: Out of Bounds" "None" "Reached out of bounds in main execution..."
+
+#!/bin/bash
+# source $MENUDIR/main.sh
+
+# source $DEFDIR/config.sh
+# source $DEFDIR/files.sh
+# source $DEFDIR/menus.sh
+# source $DEFDIR/screens.sh
+# source $DEFDIR/servers.sh
+# source $DEFDIR/windows.sh
+
+# source $HELPDIR/menuformat.sh
+# source $HELPDIR/stringformat.sh
+
+# source $HANDIR/init.sh
+# source $HANDIR/timed/boot-start.sh
+# source $HANDIR/timed/hourly-check.sh
+
+# source $FUNCDIR/windows.sh
+# source $FUNCDIR/screens.sh
+# source $FUNCDIR/servers/start.sh
+# source $FUNCDIR/servers/stop.sh
+# source $FUNCDIR/servers/reset.sh
+# source $FUNCDIR/servers/check.sh
+
+# Explicitly set the PATH variable
