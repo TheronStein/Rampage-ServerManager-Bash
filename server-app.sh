@@ -2,8 +2,13 @@
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 source ~/.zprofile
 
+UTILS_DIR="$SERVER_MANAGER/utils"
+
+while IFS= read -r -d '' file; do
+    source "$file"
+done < <(find "$UTILS_DIR" -type f -name '*.sh' -print0)
+
 # declare SRCDIR="."
-source $SRCDIR/utils/global-import.sh
 # set -e
 
 # 1) If VENG_WEEKNUM isn’t already exported, try to read it from a file:
