@@ -1,25 +1,19 @@
 #!/usr/bin/bash
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export HOME="${HOME:-/home/rampage}"
 export SERVER_MANAGER=$HOME/ServerManager
-
+WEEKNUM_FILE="$SERVER_MANAGER/data/VENG_WEEKNUM.dat"
 UTILS_DIR="$SERVER_MANAGER/utils"
 
 while IFS= read -r -d '' file; do
     source "$file"
 done < <(find "$UTILS_DIR" -type f -name '*.sh' -print0)
 
-# declare SRCDIR="."
-# set -e
-
-# 1) If VENG_WEEKNUM isn’t already exported, try to read it from a file:
-if [[ -z "${VENG_WEEKNUM:-}" ]]; then
-    WEEKNUM_FILE="$HOME/ServerManager/VENG_WEEKNUM.txt"
-    if [[ -r "$WEEKNUM_FILE" ]]; then
-        VENG_WEEKNUM="$(<"$WEEKNUM_FILE")"
-    else
-        echo "Warning: VENG_WEEKNUM not set and $WEEKNUM_FILE missing; defaulting to 0" >&2
-        VENG_WEEKNUM=0
-    fi
+if [[ -r "$WEEKNUM_FILE" ]]; then
+    VENG_WEEKNUM="$(<"$WEEKNUM_FILE")"
+else
+    echo "Warning: VENG_WEEKNUM not set and $WEEKNUM_FILE missing; defaulting to 0" >&2
+    VENG_WEEKNUM=0
 fi
 
 # 2) Now WEEKNUM is always defined:
@@ -32,7 +26,7 @@ ID="$1"
 ID="${ID//[^0-9]/}"
 
 # 5) Debug log:
-echo "$(date) ➔ WEEKNUM=$WEEKNUM   ID=$ID" >>"$HOME/ServerManager/debug.log"
+echo "$(date) ➔ WEEKNUM=$WEEKNUM   ID=$ID" >>"$SERVER_MANAGER/log/debug.log"
 
 # 6) Call your hostname builder (example):
 build_vengeance_hostname "$WEEKNUM" "$ID"
