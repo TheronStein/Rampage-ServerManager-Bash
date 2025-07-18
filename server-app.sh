@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export $SERVER_MANAGER="$HOME/ServerManager"
+export SERVER_MANAGER=$HOME/ServerManager
 
 UTILS_DIR="$SERVER_MANAGER/utils"
 
