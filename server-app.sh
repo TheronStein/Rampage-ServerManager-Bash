@@ -1,3 +1,22 @@
+#!/bin/bash
+# Define paths
+export PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WEEKNUM=0
+
+Setup_EnvironmentVars() {
+    export SERVER_MANAGER="${SERVER_MANAGER:-$PROJECT_ROOT}"
+    export UTILS_DIR="${SERVER_MANAGER_UTILS:-$SERVER_MANAGER/utils}"
+    export DATA_DIR="${SERVER_MANAGER_DATA:-$SERVER_MANAGER/data}"
+    export LOG_DIR="${SERVER_MANAGER_LOGS:-$SERVER_MANAGER/logs}"
+    export BOOT_LOG="$LOG_DIR/server-manager.log"
+    export FALLBACK_LOG_FILE="/var/log/server-manager.log"
+
+    # Define subdirectories
+    export DEFDIR="$UTILS_DIR/defs"
+    export FUNCDIR="$UTILS_DIR/funcs"
+    export HANDIR="$UTILS_DIR/handlers"
+}
+
 Create_Logs() {
     # Create log directory if it doesn't exist
     if [[ ! -d "$LOG_DIR" ]]; then
