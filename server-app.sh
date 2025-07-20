@@ -1,6 +1,6 @@
 #!/bin/bash
 # Define paths
-delcare PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export VENG_WEEKNUM=0
 
 Setup_EnvironmentVars() {
@@ -22,8 +22,8 @@ Create_Logs() {
     if [[ ! -d "$LOG_DIR" ]]; then
         mkdir -p "$LOG_DIR" 2>/dev/null || {
             echo "[$(date)] Failed to create log directory: $LOG_DIR" >>"$FALLBACK_LOG_FILE"
-            LOG_DIR="$HOME/server-manager.log"
-            BOOT_LOG="$HOME/.server-manager-boot.log"
+            export LOG_DIR="$HOME"
+            export BOOT_LOG="$HOME/.server-manager-boot.log"
         }
     fi
 
@@ -43,8 +43,14 @@ Log_Message() {
     local level="${2:-INFO}"
     local timestamp="[$(date '+%Y-%m-%d %H:%M:%S')]"
 
-    echo "$timestamp [$level] $message" >>"$BOOT_LOG"
-    echo "$timestamp [$level] $message" >>"$FALLBACK_LOG_FILE"
+    # Check if log files are set and writable
+    if [[ -n "$BOOT_LOG" ]] && [[ -w "$BOOT_LOG" ]]; then
+        echo "$timestamp [$level] $message" >>"$BOOT_LOG"
+    fi
+
+    if [[ -n "$FALLBACK_LOG_FILE" ]] && [[ -w "$FALLBACK_LOG_FILE" ]]; then
+        echo "$timestamp [$level] $message" >>"$FALLBACK_LOG_FILE"
+    fi
 
     # Also output to stdout if running interactively
     if [[ -t 1 ]]; then
@@ -148,13 +154,13 @@ Program_Start() {
         Program_Exit 0
         ;;
     3)
-        # VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
+        VENG_WEEKNUM="${ARG2:-0}"
         Log_Message "Starting Vengeance Servers with week: $VENG_WEEKNUM" "INFO"
         Boot_Servers_Veng "$VENG_WEEKNUM"
         Program_Exit 0
         ;;
     4)
-        # VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
+        VENG_WEEKNUM="${ARG2:-0}"
         Log_Message "Starting All Servers with week: $VENG_WEEKNUM" "INFO"
         Boot_Server_Proc
         Boot_Servers_Veng "$VENG_WEEKNUM"
@@ -221,14 +227,15 @@ Program_Exit() {
     exit $exit_code
 }
 
-# Main execution
+# Main execution - Set up environment FIRST before any logging
+Setup_EnvironmentVars
+Create_Logs
+
+# Now we can start logging
 Log_Message "=== SERVER MANAGER STARTUP ===" "INFO"
 Log_Message "Running from: $PROJECT_ROOT" "INFO"
 Log_Message "User: $(whoami)" "INFO"
 Log_Message "PATH: $PATH" "INFO"
-
-Setup_EnvironmentVars
-Create_Logs
 
 if ! Check_Sources; then
     Log_Message "Source check failed" "ERROR"
