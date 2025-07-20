@@ -1,122 +1,229 @@
-#!/usr/bin/bash
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export HOME="${HOME:-/home/rampage}"
-export SERVER_MANAGER=$HOME/ServerManager
-WEEKNUM_FILE="$SERVER_MANAGER/data/VENG_WEEKNUM.dat"
-UTILS_DIR="$SERVER_MANAGER/utils"
-
-while IFS= read -r -d '' file; do
-    source "$file"
-done < <(find "$UTILS_DIR" -type f -name '*.sh' -print0)
-
-if [[ -r "$WEEKNUM_FILE" ]]; then
-    VENG_WEEKNUM="$(<"$WEEKNUM_FILE")"
-else
-    echo "Warning: VENG_WEEKNUM not set and $WEEKNUM_FILE missing; defaulting to 0" >&2
-    VENG_WEEKNUM=0
-fi
-
-# 2) Now WEEKNUM is always defined:
-WEEKNUM=$VENG_WEEKNUM
-
-# 3) Pull the server ID from the first argument:
-ID="$1"
-
-# 4) (Optional) Strip any non-digits just in case:
-ID="${ID//[^0-9]/}"
-
-# 5) Debug log:
-echo "$(date) ➔ WEEKNUM=$WEEKNUM   ID=$ID" >>"$SERVER_MANAGER/log/debug.log"
-
-# 6) Call your hostname builder (example):
-build_vengeance_hostname "$WEEKNUM" "$ID"
-# …rest of your startup logic…
-
-Program_Start() {
-    # echo "$SRCDIR"
-    # echo "$MENUDIR"
-    # echo "$DEFDIR"
-    # echo "$FUNCDIR"
-    # echo "$HANDIR"
-    # echo "$LOGDIR"
-    # echo "$TEMPDIR"
-    # Main execution
-    if [ $ARG1 -eq 1 ]; then
-        Boot_Server_Proc
-        Program_Exit
-    elif [ -z $ARG1 ]; then
-        ${MENU_NAMES["MAIN,FUNC"]}
-        Program_Exit
-    elif [ $ARG1 -eq 2 ]; then
-        Hourly_Check_Proc
-        Program_Exit
-    elif [ $ARG1 -eq 3 ]; then
-        Boot_Servers_Veng $WEEKNUM
-        Program_Exit
-        #    elif [ $ARG -eq 3 ]; then
-        # Custom_Server_Proc
-        # Program_Exit
-    elif [ $ARG1 -eq 4 ]; then
-        Boot_Server_Proc
-        Boot_Servers_Veng $WEEKNUM
-        Program_Exit
-        #    elif [ $ARG -eq 3 ]; then
-        # Custom_Server_Proc
-        # Program_Exit
-    else
-        Error_Handler "Invalid Argument" "Program_Start" "${MENU_NAMES["MAIN,FUNC"]}" "${MENU_NAMES["MAIN,STRING"]}" "$ARG1"
+Create_Logs() {
+    # Create log directory if it doesn't exist
+    if [[ ! -d "$LOG_DIR" ]]; then
+        mkdir -p "$LOG_DIR" 2>/dev/null || {
+            echo "[$(date)] Failed to create log directory: $LOG_DIR" >>"$FALLBACK_LOG_FILE"
+            LOG_DIR="/var/log"
+            BOOT_LOG="/var/log/server-manager.log"
+        }
     fi
-    Program_Error_Exit "Out of Bounds" "Program_Start" "Reached Out of Bounds in $2..."
-    #Error_Handler "Out of Bounds" "Program Start" "${MENU_NAMES["MAIN,FUNCTION"]}" "${MENU_NAMES["MAIN,STRING"]}" "$ARG1"
+
+    # Create log files
+    for log_file in "$BOOT_LOG" "$FALLBACK_LOG_FILE"; do
+        if [[ ! -f "$log_file" ]]; then
+            touch "$log_file" 2>/dev/null || echo "Failed to create $log_file"
+        fi
+    done
+
+    # Initial log entry
+    echo "[$(date)] Server Manager started - PID: $$" >>"$BOOT_LOG"
 }
 
-Program_Error_Exit() {
-    TYPE="$1"
-    FUNCTION="$2"
-    MESSAGE="$3"
-    Write_Menu $TYPE
-    sleep 2
-    echo "From: $FUNCTION"
-    sleep 2
-    echo "Error Message: $MESSAGE"
-    sleep 2
-    Program_Exit
+Log_Message() {
+    local message="$1"
+    local level="${2:-INFO}"
+    local timestamp="[$(date '+%Y-%m-%d %H:%M:%S')]"
+
+    echo "$timestamp [$level] $message" >>"$BOOT_LOG"
+    echo "$timestamp [$level] $message" >>"$FALLBACK_LOG_FILE"
+
+    # Also output to stdout if running interactively
+    if [[ -t 1 ]]; then
+        echo "$timestamp [$level] $message"
+    fi
+}
+
+Check_Sources() {
+    if [[ -z "$SERVER_MANAGER" ]]; then
+        Log_Message "SERVER_MANAGER environment variable is not set" "ERROR"
+        return 1
+    fi
+
+    if [[ ! -d "$SERVER_MANAGER" ]]; then
+        Log_Message "SERVER_MANAGER directory does not exist at $SERVER_MANAGER" "ERROR"
+        return 1
+    fi
+
+    return 0
+}
+
+Source_Project() {
+    # Check required directories
+    local REQUIRED_DIRS=("$UTILS_DIR" "$DATA_DIR" "$LOG_DIR" "$DEFDIR" "$FUNCDIR" "$HANDIR")
+
+    for dir in "${REQUIRED_DIRS[@]}"; do
+        if [[ ! -d "$dir" ]]; then
+            Log_Message "Required directory missing: $dir" "ERROR"
+            return 1
+        fi
+    done
+
+    Log_Message "All required directories found" "INFO"
+    return 0
+}
+
+Source_Utils() {
+    # Source definition files first
+    local def_files=("configs.sh" "wadlist.sh" "hostnames.sh")
+    for file in "${def_files[@]}"; do
+        local full_path="$DEFDIR/$file"
+        if [[ -f "$full_path" ]]; then
+            source "$full_path"
+            Log_Message "Sourced definition file: $file" "INFO"
+        else
+            Log_Message "Definition file not found: $full_path" "ERROR"
+            return 1
+        fi
+    done
+
+    # Source function files
+    local func_files=("screens.sh" "servers.sh" "windows.sh")
+    for file in "${func_files[@]}"; do
+        local full_path="$FUNCDIR/$file"
+        if [[ -f "$full_path" ]]; then
+            source "$full_path"
+            Log_Message "Sourced function file: $file" "INFO"
+        else
+            Log_Message "Function file not found: $full_path" "ERROR"
+            return 1
+        fi
+    done
+
+    # Source handler files
+    local handler_files=("boot-start.sh" "server-health-check.sh")
+    for file in "${handler_files[@]}"; do
+        local full_path="$HANDIR/$file"
+        if [[ -f "$full_path" ]]; then
+            source "$full_path"
+            Log_Message "Sourced handler file: $file" "INFO"
+        else
+            # Health check is optional
+            if [[ "$file" != "server-health-check.sh" ]]; then
+                Log_Message "Handler file not found: $full_path" "ERROR"
+                return 1
+            else
+                Log_Message "Optional health check file not found: $full_path" "WARN"
+            fi
+        fi
+    done
+
+    return 0
+}
+
+# Handle arguments
+ARG1="$1"
+ARG2="$2"
+
+Program_Start() {
+    Log_Message "Program started with arguments: ARG1=$ARG1, ARG2=$ARG2" "INFO"
+
+    case "$ARG1" in
+    1)
+        Log_Message "Starting Boot Server Process" "INFO"
+        Boot_Server_Proc
+        Program_Exit 0
+        ;;
+    2)
+        Log_Message "Starting Hourly Check Process" "INFO"
+        Hourly_Check_Proc
+        Program_Exit 0
+        ;;
+    3)
+        VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
+        Log_Message "Starting Vengeance Servers with week: $VENG_WEEKNUM" "INFO"
+        Boot_Servers_Veng "$VENG_WEEKNUM"
+        Program_Exit 0
+        ;;
+    4)
+        VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
+        Log_Message "Starting All Servers with week: $VENG_WEEKNUM" "INFO"
+        Boot_Server_Proc
+        Boot_Servers_Veng "$VENG_WEEKNUM"
+        Program_Exit 0
+        ;;
+    5)
+        Log_Message "Checking Server Status" "INFO"
+        Check_Server_Status
+        Program_Exit 0
+        ;;
+    6)
+        Log_Message "Running Health Check" "INFO"
+        if command -v show_server_health_status &>/dev/null; then
+            show_server_health_status
+        else
+            Log_Message "Health check not available" "WARN"
+        fi
+        Program_Exit 0
+        ;;
+    7)
+        Log_Message "Running Enhanced Hourly Check" "INFO"
+        if command -v Enhanced_Hourly_Check &>/dev/null; then
+            Enhanced_Hourly_Check
+        else
+            Log_Message "Enhanced health check not available - running standard check" "WARN"
+            Hourly_Check_Proc
+        fi
+        Program_Exit 0
+        ;;
+    "monitor")
+        Log_Message "Starting server monitor mode" "INFO"
+        if command -v monitor_servers &>/dev/null; then
+            monitor_servers "${ARG2:-60}"
+        else
+            Log_Message "Monitor function not available" "ERROR"
+        fi
+        Program_Exit 0
+        ;;
+    "force-restart")
+        Log_Message "Force restart requested - killing all sessions" "WARN"
+        tmux kill-server 2>/dev/null
+        sleep 2
+        Boot_Server_Proc
+        if [[ -n "$ARG2" ]]; then
+            Boot_Servers_Veng "$ARG2"
+        fi
+        Program_Exit 0
+        ;;
+    "")
+        Log_Message "No argument provided - exiting" "WARN"
+        Program_Exit 1
+        ;;
+    *)
+        Log_Message "Invalid argument: $ARG1" "ERROR"
+        Log_Message "Valid options: 1, 2, 3 [week], 4 [week], 5, 6, 7, monitor [interval], force-restart [week]" "INFO"
+        Program_Exit 1
+        ;;
+    esac
 }
 
 Program_Exit() {
-    Write_Divider
-    echo "Exiting Program..."
-    Write_Divider
-    sleep 2
-    exit
+    local exit_code="${1:-0}"
+    Log_Message "Program exiting with code: $exit_code" "INFO"
+    exit $exit_code
 }
 
-ARG1=$1
-Program_Start $ARG1
-Program_Error_Exit "App Exeuction: Out of Bounds" "None" "Reached out of bounds in main execution..."
+# Main execution
+Log_Message "=== SERVER MANAGER STARTUP ===" "INFO"
+Log_Message "Running from: $PROJECT_ROOT" "INFO"
+Log_Message "User: $(whoami)" "INFO"
+Log_Message "PATH: $PATH" "INFO"
 
-#!/bin/bash
-# source $MENUDIR/main.sh
+Setup_EnvironmentVars
+Create_Logs
 
-# source $DEFDIR/config.sh
-# source $DEFDIR/files.sh
-# source $DEFDIR/menus.sh
-# source $DEFDIR/screens.sh
-# source $DEFDIR/servers.sh
-# source $DEFDIR/windows.sh
+if ! Check_Sources; then
+    Log_Message "Source check failed" "ERROR"
+    Program_Exit 1
+fi
 
-# source $HELPDIR/menuformat.sh
-# source $HELPDIR/stringformat.sh
+if ! Source_Project; then
+    Log_Message "Project source failed" "ERROR"
+    Program_Exit 1
+fi
 
-# source $HANDIR/init.sh
-# source $HANDIR/timed/boot-start.sh
-# source $HANDIR/timed/hourly-check.sh
+if ! Source_Utils; then
+    Log_Message "Utils source failed" "ERROR"
+    Program_Exit 1
+fi
 
-# source $FUNCDIR/windows.sh
-# source $FUNCDIR/screens.sh
-# source $FUNCDIR/servers/start.sh
-# source $FUNCDIR/servers/stop.sh
-# source $FUNCDIR/servers/reset.sh
-# source $FUNCDIR/servers/check.sh
-
-# Explicitly set the PATH variable
+Program_Start
