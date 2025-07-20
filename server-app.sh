@@ -1,7 +1,7 @@
 #!/bin/bash
 # Define paths
-export PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WEEKNUM=0
+delcare PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export VENG_WEEKNUM=0
 
 Setup_EnvironmentVars() {
     export SERVER_MANAGER="${SERVER_MANAGER:-$PROJECT_ROOT}"
@@ -9,7 +9,7 @@ Setup_EnvironmentVars() {
     export DATA_DIR="${SERVER_MANAGER_DATA:-$SERVER_MANAGER/data}"
     export LOG_DIR="${SERVER_MANAGER_LOGS:-$SERVER_MANAGER/logs}"
     export BOOT_LOG="$LOG_DIR/server-manager.log"
-    export FALLBACK_LOG_FILE="$XDG_HOME_DIR/.server-manager.log"
+    export FALLBACK_LOG_FILE="$HOME/.server-manager.log"
 
     # Define subdirectories
     export DEFDIR="$UTILS_DIR/defs"
@@ -22,8 +22,8 @@ Create_Logs() {
     if [[ ! -d "$LOG_DIR" ]]; then
         mkdir -p "$LOG_DIR" 2>/dev/null || {
             echo "[$(date)] Failed to create log directory: $LOG_DIR" >>"$FALLBACK_LOG_FILE"
-            LOG_DIR="/var/log"
-            BOOT_LOG="/var/log/server-manager.log"
+            LOG_DIR="$HOME/server-manager.log"
+            BOOT_LOG="$HOME/.server-manager-boot.log"
         }
     fi
 
@@ -148,13 +148,13 @@ Program_Start() {
         Program_Exit 0
         ;;
     3)
-        VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
+        # VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
         Log_Message "Starting Vengeance Servers with week: $VENG_WEEKNUM" "INFO"
         Boot_Servers_Veng "$VENG_WEEKNUM"
         Program_Exit 0
         ;;
     4)
-        VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
+        # VENG_WEEKNUM="${ARG2:-$WEEKNUM}"
         Log_Message "Starting All Servers with week: $VENG_WEEKNUM" "INFO"
         Boot_Server_Proc
         Boot_Servers_Veng "$VENG_WEEKNUM"
