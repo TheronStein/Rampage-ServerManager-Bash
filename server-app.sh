@@ -9,7 +9,7 @@ Setup_EnvironmentVars() {
     export DATA_DIR="${SERVER_MANAGER_DATA:-$SERVER_MANAGER/data}"
     export LOG_DIR="${SERVER_MANAGER_LOGS:-$SERVER_MANAGER/logs}"
     export BOOT_LOG="$LOG_DIR/server-manager.log"
-    export FALLBACK_LOG_FILE="/var/log/server-manager.log"
+    export FALLBACK_LOG_FILE="$XDG_HOME_DIR/.server-manager.log"
 
     # Define subdirectories
     export DEFDIR="$UTILS_DIR/defs"
